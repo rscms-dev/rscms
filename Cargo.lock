@@ -3,5 +3,13 @@
 version = 3
 
 [[package]]
-name = "rscms"
+name = "api"
+version = "0.1.0"
+
+[[package]]
+name = "auth"
+version = "0.1.0"
+
+[[package]]
+name = "cms"
 version = "0.1.0"
