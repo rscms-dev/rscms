@@ -1,6 +1,6 @@
 use serde::Serialize;
 
-pub mod admins;
+pub mod auth;
 
 #[derive(Serialize)]
 pub struct ApiResult<T: Serialize> {
@@ -18,11 +18,11 @@ impl<T: Serialize> ApiResult<T> {
         }
     }
 
-    pub fn error<E: ToString>(err: E) -> Self {
-        ApiResult {
-            code: 1,
-            msg: Some(err.to_string()),
-            data: None,
-        }
-    }
+    // pub fn error<E: ToString>(err: E) -> Self {
+    //     ApiResult {
+    //         code: 1,
+    //         msg: Some(err.to_string()),
+    //         data: None,
+    //     }
+    // }
 }

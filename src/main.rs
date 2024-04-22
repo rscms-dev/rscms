@@ -1,11 +1,12 @@
 use std::env;
 
+use crate::route::auth::auth_routes;
+use crate::route::index::general_routes;
 use actix_web::{App, HttpServer};
 use dotenv::dotenv;
-use route::index::general_routes;
 
-#[path = "./api/mod.rs"]
-mod api;
+#[path = "./handler/mod.rs"]
+mod handler;
 #[path = "./route/mod.rs"]
 mod route;
 
@@ -19,7 +20,7 @@ async fn main() -> std::io::Result<()> {
     }
     println!("MongoDB URL: {}", mongo_url.unwrap());
 
-    let app = move || App::new().configure(general_routes);
+    let app = move || App::new().configure(general_routes).configure(auth_routes);
     HttpServer::new(app).bind(("127.0.0.1", 8080))?.run().await
 }
 

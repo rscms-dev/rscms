@@ -1,10 +1,5 @@
-use actix_web::{web, HttpResponse, Responder};
+use actix_web::web;
 
 pub fn general_routes(cfg: &mut web::ServiceConfig) {
-    cfg.route("/", web::get().to(|| async { "Hello" }));
-    cfg.route("/health", web::get().to(health_check_handler));
-}
-
-pub async fn health_check_handler() -> impl Responder {
-    HttpResponse::Ok().json("ok")
+    cfg.route("/", web::get().to(|| async { "ok" }));
 }
