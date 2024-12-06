@@ -1,6 +1,6 @@
 use crate::config::auth::{Claims, JwtConfig};
 use crate::middleware::auth::AuthenticatedUser;
-use crate::models::{AuthResponse, LoginRequest, MessageResponse, RegisterRequest, User};
+use crate::models::{AuthResponse, GetVerificationCodeRequest, LoginRequest, MessageResponse, RegisterRequest, User};
 use crate::utils::email::EmailService;
 use actix_web::{get, post, web, HttpResponse, Responder};
 use chrono::{Duration, Utc};
@@ -161,6 +161,75 @@ pub async fn login(
         }
         Ok(None) => HttpResponse::BadRequest().json(MessageResponse {
             message: "Invalid email or verification code".to_string(),
+        }),
+        Err(e) => {
+            log::error!("Database error: {:?}", e);
+            HttpResponse::InternalServerError().json(MessageResponse {
+                message: "Internal server error".to_string(),
+            })
+        }
+    }
+}
+
+#[post("/auth/verification-code")]
+pub async fn get_verification_code(
+    pool: web::Data<MySqlPool>,
+    request: web::Json<GetVerificationCodeRequest>,
+    email_service: web::Data<EmailService>,
+) -> impl Responder {
+    // 检查用户是否存在
+    let user = sqlx::query!(
+        "SELECT id FROM users WHERE email = ?",
+        request.email
+    )
+    .fetch_optional(pool.get_ref())
+    .await;
+
+    match user {
+        Ok(Some(_)) => {
+            // 生成新的验证码
+            let verification_code = generate_verification_code();
+            let expires_at = Utc::now() + Duration::minutes(30);
+
+            // 更新用户的验证码
+            let result = sqlx::query!(
+                r#"
+                UPDATE users 
+                SET verification_code = ?, 
+                    verification_code_expires_at = ? 
+                WHERE email = ?
+                "#,
+                verification_code,
+                expires_at,
+                request.email
+            )
+            .execute(pool.get_ref())
+            .await;
+
+            match result {
+                Ok(_) => {
+                    // 发送验证码邮件
+                    if let Err(e) = email_service.send_verification_code(&request.email, &verification_code) {
+                        log::error!("Failed to send verification email: {:?}", e);
+                        return HttpResponse::InternalServerError().json(MessageResponse {
+                            message: "Failed to send verification email".to_string(),
+                        });
+                    }
+
+                    HttpResponse::Ok().json(MessageResponse {
+                        message: "Verification code sent successfully".to_string(),
+                    })
+                }
+                Err(e) => {
+                    log::error!("Failed to update verification code: {:?}", e);
+                    HttpResponse::InternalServerError().json(MessageResponse {
+                        message: "Failed to generate verification code".to_string(),
+                    })
+                }
+            }
+        }
+        Ok(None) => HttpResponse::BadRequest().json(MessageResponse {
+            message: "No user found with this email".to_string(),
         }),
         Err(e) => {
             log::error!("Database error: {:?}", e);

@@ -63,6 +63,7 @@ async fn main() -> std::io::Result<()> {
             .service(handlers::auth::register)
             .service(handlers::auth::login)
             .service(handlers::auth::me)
+            .service(handlers::auth::get_verification_code)
             // 健康检查
             .service(handlers::health_check)
     })

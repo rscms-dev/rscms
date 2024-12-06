@@ -3,6 +3,7 @@ use lettre::{Message, SmtpTransport, Transport};
 use lettre::transport::smtp::client::TlsParameters;
 use std::sync::Arc;
 use std::env;
+use log;
 
 #[derive(Clone)]
 pub struct EmailService {
@@ -40,13 +41,25 @@ impl EmailService {
     }
 
     pub fn send_verification_code(&self, to_email: &str, code: &str) -> Result<(), Box<dyn std::error::Error>> {
+        log::debug!("Attempting to send verification code to {}", to_email);
+        
         let email = Message::builder()
             .from(self.from_email.parse()?)
             .to(to_email.parse()?)
             .subject("Your Verification Code")
             .body(format!("Your verification code is: {}", code))?;
 
-        self.smtp_transport.send(&email)?;
-        Ok(())
+        log::debug!("Email message built successfully");
+        
+        match self.smtp_transport.send(&email) {
+            Ok(_) => {
+                log::info!("Successfully sent verification code to {}", to_email);
+                Ok(())
+            }
+            Err(e) => {
+                log::error!("Failed to send email: {:?}", e);
+                Err(Box::new(e))
+            }
+        }
     }
 }

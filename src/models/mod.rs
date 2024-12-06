@@ -23,6 +23,11 @@ pub struct RegisterRequest {
 }
 
 #[derive(Debug, Serialize, Deserialize)]
+pub struct GetVerificationCodeRequest {
+    pub email: String,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
 pub struct LoginRequest {
     pub email: String,
     pub verification_code: String,
