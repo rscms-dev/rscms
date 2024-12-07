@@ -63,7 +63,7 @@ Follow these steps to set up and run RSCMS:
    ```
    This will start:
    - MySQL database (accessible at localhost:3306)
-   - PHPMyAdmin interface (accessible at http://localhost:8080)
+   - PHPMyAdmin interface (accessible at <http://localhost:8080> )
    
    Default database credentials:
    - Username: root

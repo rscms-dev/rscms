@@ -62,8 +62,8 @@ RSCMS是一个采用Rust全新开发的开源内容管理系统，旨在为开�
    docker-compose up -d
    ```
    这将启动：
-   - MySQL数据库（可通过localhost:3306访问）
-   - PHPMyAdmin界面（可通过http://localhost:8080访问）
+   - MySQL数据库（可通过 localhost:3306 访问）
+   - PHPMyAdmin界面（可通过 <http://localhost:8080> 访问）
    
    默认数据库凭据：
    - 用户名：root
