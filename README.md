@@ -85,7 +85,7 @@ Follow these steps to set up and run RSCMS:
 - PHPMyAdmin is available at http://localhost:8080
 - To stop the database: `docker-compose down`
 - To view database logs: `docker-compose logs`
-- Database data is persisted in `./db/data`
+- Database data is persisted in `./db/temp_data`
 - Initial migrations are automatically applied from `./db/migrations`
 
 **Get Involved:**

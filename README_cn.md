@@ -85,7 +85,7 @@ RSCMS是一个采用Rust全新开发的开源内容管理系统，旨在为开�
 - PHPMyAdmin可通过http://localhost:8080访问
 - 停止数据库：`docker-compose down`
 - 查看数据库日志：`docker-compose logs`
-- 数据库数据持久化存储在`./db/data`目录
+- 数据库数据持久化存储在`./db/temp_data`目录
 - 初始化迁移文件自动从`./db/migrations`目录加载
 
 **参与其中：**
