@@ -44,5 +44,28 @@ pub async fn init_db(pool: &MySqlPool) -> Result<(), sqlx::Error> {
     .execute(pool)
     .await?;
 
+    // 创建应用表
+    sqlx::query(
+        r#"
+        CREATE TABLE IF NOT EXISTS apps (
+            id BIGINT PRIMARY KEY AUTO_INCREMENT,
+            name VARCHAR(100) NOT NULL,
+            description TEXT,
+            identifier VARCHAR(50) NOT NULL UNIQUE,
+            creator_id BIGINT NOT NULL,
+            created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+            updater_id BIGINT NOT NULL,
+            updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+            FOREIGN KEY (creator_id) REFERENCES users(id),
+            FOREIGN KEY (updater_id) REFERENCES users(id),
+            INDEX idx_name (name),
+            INDEX idx_identifier (identifier),
+            INDEX idx_creator (creator_id)
+        )
+        "#,
+    )
+    .execute(pool)
+    .await?;
+
     Ok(())
 }

@@ -3,7 +3,9 @@ use sqlx::FromRow;
 use chrono::{DateTime, Utc};
 
 pub mod article;
+pub mod app;
 pub use article::Article;
+pub use app::*;
 
 #[derive(Debug, Serialize, Deserialize, FromRow)]
 pub struct User {

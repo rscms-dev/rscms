@@ -57,19 +57,27 @@ async fn main() -> std::io::Result<()> {
             .app_data(db_pool.clone())
             .app_data(web::Data::new(jwt_config.clone()))
             .app_data(web::Data::new(email_service.clone()))
-            // 认证相关路由
-            .service(handlers::auth::register)
-            .service(handlers::auth::login)
+            .service(
+                web::scope("/api")
+                    .service(handlers::health_check)
+                    .service(handlers::register)
+                    .service(handlers::login)
+                    .service(handlers::get_verification_code)
+                    .service(
+                        web::scope("/apps")
+                            .route("", web::post().to(handlers::create_app))
+                            .route("", web::get().to(handlers::list_apps))
+                            .route("/{id}", web::get().to(handlers::get_app))
+                            .route("/{id}", web::put().to(handlers::update_app))
+                            .route("/{id}", web::delete().to(handlers::delete_app))
+                    )
+            )
             .service(handlers::auth::me)
-            .service(handlers::auth::get_verification_code)
-            // 文章相关路由
             .service(handlers::article::create_article)
             .service(handlers::article::get_article)
             .service(handlers::article::list_articles)
             .service(handlers::article::update_article)
             .service(handlers::article::delete_article)
-            // 健康检查
-            .service(handlers::health_check)
             // 404 处理
             .default_service(web::route().to(|| async {
                 HttpResponse::NotFound()
