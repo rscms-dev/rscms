@@ -1,4 +1,5 @@
 use actix_web::{web, App, HttpServer, middleware::Logger};
+use actix_web::{HttpResponse, http::StatusCode};
 use actix_cors::Cors;
 use dotenv::dotenv;
 use sqlx::mysql::MySqlPool;
@@ -69,6 +70,14 @@ async fn main() -> std::io::Result<()> {
             .service(handlers::article::delete_article)
             // 健康检查
             .service(handlers::health_check)
+            // 404 处理
+            .default_service(web::route().to(|| async {
+                HttpResponse::NotFound()
+                    .json(serde_json::json!({
+                        "code": StatusCode::NOT_FOUND.as_u16(),
+                        "message": "Resource not found"
+                    }))
+            }))
     })
     .bind(format!("{}:{}", host, port))?
     .run()
