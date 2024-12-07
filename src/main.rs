@@ -30,9 +30,6 @@ async fn main() -> std::io::Result<()> {
         .await
         .expect("Failed to create pool");
 
-    // 初始化数据库表
-    db::init_db(&pool).await.expect("Failed to initialize database");
-
     // 创建 JWT 配置
     let jwt_config = JwtConfig::from_env();
 

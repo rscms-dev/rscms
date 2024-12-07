@@ -2,4 +2,4 @@
 .vscode
 .idea
 .env
-./db/data/*
+/db/data/*

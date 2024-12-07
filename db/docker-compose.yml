@@ -10,7 +10,9 @@ services:
       MYSQL_ROOT_PASSWORD: example
       MYSQL_DATABASE: rscms
     volumes:
+      - ./migrations:/docker-entrypoint-initdb.d
       - ./data:/var/lib/mysql
+
 
   phpmyadmin:
     depends_on:
